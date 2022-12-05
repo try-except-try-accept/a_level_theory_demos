@@ -102,14 +102,14 @@ def date_check(func, this_date):
     if type(this_date) != str:
         raise PseudocodeTypeError(func, "DATE", this_date)
     try:
-        dd, mm, yy = this_date.split("/")
+        dd, mm, yyyy = this_date.split("/")
     except:
         raise PseudocodeTypeError(func, "DATE", this_date)
 
-    if not all(i.isdigit() for i in [dd, mm, yy]):
+    if not all(i.isdigit() for i in [dd, mm, yyyy]):
         raise PseudocodeTypeError(func, "DATE", this_date)
 
-    iso = "-".join([yy, mm, dd])
+    iso = "-".join([yyyy, mm, dd])
     try:
         date.fromisoformat(iso)
     except ValueError:
@@ -347,16 +347,16 @@ def TODAY():
 
 ################################################
     
-def SETDATE(dd, mm, yy):
+def SETDATE(dd, mm, yyyy):
     """Implementation of CAIE's pseudocode TODAY function"""
     FUNC = call_stack()[0][3]    
     int_check(FUNC, dd, minimum=1)
     int_check(FUNC, mm, minimum=1)
-    int_check(FUNC, yy, minimum=1)
+    int_check(FUNC, yyyy, minimum=1)
     try:
-        return date(yy, mm, dd)
+        return f"{str(dd).zfill(2)}/{str(mm).zfill(2)}/{yyyy}"
     except ValueError:
-        raise PseudocodeValueError(func, [dd, mm, yy], "dd/mm/yy out of range")
+        raise PseudocodeValueError(func, [dd, mm, yyyy], "dd/mm/yy out of range")
 
 ################################################
 
