@@ -19,6 +19,7 @@ REAL = float
 BOOLEAN = bool
 CHAR = str
 ARRAY = list
+DATE = date
 
 
 line_q = []
