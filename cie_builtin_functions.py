@@ -414,7 +414,7 @@ def READFILE(file_name):
 
     file = file_map[file_name]   
 
-    return file.readline()   
+    return file.readline().strip()   
     
 ################################################
 
@@ -437,7 +437,7 @@ def EOF(file_name):
 
     file_check(FUNC, file_name)
 
-    this_line = file_map[file_name].readline()
+    this_line = file_map[file_name].readline().strip()
     if this_line:
         line_q.append(this_line)
     else:
