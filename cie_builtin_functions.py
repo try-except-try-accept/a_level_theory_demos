@@ -1,8 +1,34 @@
+# https://papers.gceguide.com/A%20Levels/Computer%20Science%20(for%20first%20examination%20in%202021)%20(9618)/2022/9618_s22_in_22.pdf
+
+# https://pastpapers.co/cie/A-Level/Computer%20Science%20%28for%20first%20examination%20in%202021%29%20%289618%29/Syllabus%20%26%20Specimen/9618_y21_sg.pdf
+
+################################################
+
 from inspect import stack as call_stack
 from random import randint
 from datetime import date
 
+
 file_map = {}
+
+FALSE = False
+TRUE = True
+INTEGER = int
+STRING = str
+REAL = float
+BOOLEAN = bool
+CHAR = str
+ARRAY = list
+
+
+line_q = []
+
+################################################
+
+class PseudocodeNameError(NameError):
+    def __init__(self):        
+        self.message = f"This function does not exist"
+        super().__init__(self.message)
 
 ################################################
 
@@ -27,6 +53,11 @@ class PseudocodeFileError(FileNotFoundError):
         else:
             self.message = msg
         super().__init__(self.message)
+
+################################################
+
+def no_func(a):    
+    raise PseudocodeNameError()
 
 ################################################
 
@@ -111,7 +142,7 @@ def MID(string, index, num_chars):
         raise PseudocodeValueError(FUNC, index, f'not a valid index for the string "{string}"')
     elif num_chars + index > len(string) + 1:
         raise PseudocodeValueError(FUNC, num_chars, f'not enough characters in string "{string}"')
-    return string[index-1:index+num_chars]
+    return string[index-1:index+num_chars-1]
 
 ################################################
 
@@ -174,6 +205,7 @@ def NUM_TO_STR(num):
 
 def STR_TO_NUM(string):
     """Implementation of CAIE's pseudocode STR_TO_NUM function"""
+    string = str(string)
     
     FUNC = call_stack()[0][3]
     string_check(FUNC, string)
@@ -331,24 +363,24 @@ def SETDATE(dd, mm, yy):
 def INPUT():
     """Implementation of CAIE's pseudocode INPUT statement"""
     return input()
-
+	
 ################################################
 
-def OUTPUT(text):
+def OUTPUT(*text):
     """Implementation of CAIE's pseudocode OUTPUT statement"""
-    print(text)
+    print(" ".join(str(t) for t in text))
 
 ################################################
 
-def OPENFILE(file_name, FOR="READ"):
+def OPENFILE(file_name, mode):
     """Implementation of CAIE's pseudocode OPENFILE statement"""
     FUNC = call_stack()[0][3]   
     try:
-        FOR = {"READ":"r","WRITE":"w","APPEND":"a", "RANDOM":"rb"}[FOR]
+        mode = {"FOR READ":"r","FOR WRITE":"w","FOR APPEND":"a", "FOR RANDOM":"rb"}[mode]
     except KeyError:
-        raise PseudocodeFileError(FUNC, filename, "FOR (mode) must be READ/WRITE/APPEND/RANDOM")
+        raise PseudocodeFileError(FUNC, file_name, "FOR (mode) must be READ/WRITE/APPEND/RANDOM")
     
-    file_map[file_name] = open(filename, mode)
+    file_map[file_name] = open(file_name, mode)
     
 ################################################
 
@@ -358,33 +390,53 @@ def WRITEFILE(file_name, data):
     file_check(FUNC, file_name)
     string_check(FUNC, data)
 
-    file.write(WRITEFILE)    
+    file = file_map[file_name]
+
+    file.write(data + "\n")    
     
 ################################################
 
 
-def READFILE(file_name, data):
+def READFILE(file_name):
     """Implementation of CAIE's pseudocode READFILE statement"""
+
     FUNC = call_stack()[0][3]   
     file_check(FUNC, file_name)
-    string_check(FUNC, data)
+
+    if len(line_q):
+        return line_q.pop(0) 
+
+    file = file_map[file_name]   
 
     return file.readline()   
     
 ################################################
 
 
-def CLOSEFILE(file_name, data):
+def CLOSEFILE(file_name):
     """Implementation of CAIE's pseudocode READFILE statement"""
     FUNC = call_stack()[0][3]
 
     file_check(FUNC, file_name)
-    
-    string_check(FUNC, data)
 
     file_map[file_name].close()
 
     file_map.pop(file_name)
+    
+################################################
+
+def EOF(file_name):
+    """Implementation of CAIE's pseudocode EOF function"""
+    FUNC = call_stack()[0][3]
+
+    file_check(FUNC, file_name)
+
+    this_line = file_map[file_name].readline()
+    if this_line:
+        line_q.append(this_line)
+    else:
+        return True
+
     
 ################################################
 
@@ -814,8 +866,6 @@ def tests():
         SETDATE(6, 13, 2000)
     except Exception as e:
         print(e)
-
-        
 
 
 if __name__ == "__main__":
