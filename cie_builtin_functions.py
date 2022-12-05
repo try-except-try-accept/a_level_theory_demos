@@ -19,7 +19,6 @@ REAL = float
 BOOLEAN = bool
 CHAR = str
 ARRAY = list
-DATE = date
 
 
 line_q = []
@@ -375,7 +374,13 @@ def OUTPUT(*text):
 
 def OPENFILE(file_name, mode):
     """Implementation of CAIE's pseudocode OPENFILE statement"""
-    FUNC = call_stack()[0][3]   
+    FUNC = call_stack()[0][3]
+    try:
+        file_check(file_name)
+        raise PseudocodeFileError(FUNC, file_name, "can't open file - already open in memory.")
+    except:
+        pass
+        
     try:
         mode = {"FOR READ":"r","FOR WRITE":"w","FOR APPEND":"a", "FOR RANDOM":"rb"}[mode]
     except KeyError:
