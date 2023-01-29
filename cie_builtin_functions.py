@@ -446,6 +446,13 @@ def EOF(file_name):
     
 ################################################
 
+    
+def NOT(exp):
+    """Implementation of CAIE's pseudocode NOT operator, which is normally used like a function"""
+    return not exp
+
+################################################
+
 def tests():
 
     string = "hello"
