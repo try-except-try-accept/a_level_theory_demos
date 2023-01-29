@@ -197,7 +197,7 @@ def NUM_TO_STR(num):
     """Implementation of CAIE's pseudocode NUM_TO_STR function"""
     
     FUNC = call_stack()[0][3]
-    number_check(FUNC, num)
+    number_check(FUNC, str(num))
     
     return str(num)
 
