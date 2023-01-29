@@ -84,7 +84,7 @@ def int_check(func, integer, minimum=None):
 ################################################
 
 def real_check(func, real):
-    if type(real) != float:
+    if type(real) != float or type(real) != int:
         raise PseudocodeTypeError(func, "REAL", real)
 
 ################################################
@@ -187,7 +187,7 @@ def INT(real):
     """Implementation of CAIE's pseudocode INT function"""
     
     FUNC = call_stack()[0][3]
-    real_check(FUNC, real)
+    number_check(FUNC, real)
     
     return int(real)
 
