@@ -65,7 +65,7 @@ def file_check(func, fn):
     try:
         file = file_map[fn]
     except KeyError:
-        raise PseudocodeFileError(FUNC, fn)
+        raise PseudocodeFileError(func, fn)
 
 #################################################
 
