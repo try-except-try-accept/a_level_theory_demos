@@ -118,6 +118,8 @@ def date_check(func, this_date):
 ################################################            
 
 def number_check(func, number):
+	number = str(number)
+	
     if number[0] == "-":
         number = number[1:]
 
