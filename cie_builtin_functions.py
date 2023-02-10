@@ -118,7 +118,7 @@ def date_check(func, this_date):
 ################################################            
 
 def number_check(func, number):
-	number = str(number)
+    number = str(number)
 	
     if number[0] == "-":
         number = number[1:]
@@ -871,16 +871,73 @@ def tests():
         print(e)
     try:
         SETDATE(99, 99, 1999)
+        print("Able to SETDATE with illogical mm / dd values")
+        assert False
     except Exception as e:
         print(e)
     try:
         SETDATE(29, 2, 2022)
+        print("Able to SETDATE with illegal 29th feb")
+        assert False
     except Exception as e:
         print(e)
     try:
         SETDATE(6, 13, 2000)
+        print("Able to SETDATE with mm and dd switched")
+        assert False
     except Exception as e:
         print(e)
+
+    try:
+        READFILE("notopen")
+        print("Able to read from file not open")
+        assert False
+    except Exception as e:
+        print(e)
+
+    OPENFILE("write.txt", "FOR WRITE")
+
+    assert "write.txt" in file_map
+
+    WRITEFILE("write.txt", "some text")
+
+    try:
+        READFILE("write.txt")
+        print("reading from file open in write mode?")
+    except Exception as e:
+        print(e)
+
+    CLOSEFILE("write.txt")
+
+    OPENFILE("write.txt", "FOR READ")
+
+    assert READFILE("write.txt") == "some text"
+
+    try:
+        CLOSEFILE("notopen")
+        print("Able to close file not open")
+        assert False
+    except Exception as e:
+        print(e)
+
+    CLOSEFILE("write.txt")
+
+    OPENFILE("write.txt", "FOR WRITE")
+    WRITEFILE("write.txt", "new")
+    CLOSEFILE("write.txt")
+    OPENFILE("write.txt", "FOR READ")
+
+    assert READFILE("write.txt") == "new"
+
+    CLOSEFILE("write.txt")
+
+    OPENFILE("write.txt", "FOR APPEND")
+    WRITEFILE("write.txt", "second")
+    CLOSEFILE("write.txt")
+    OPENFILE("write.txt", "FOR READ")
+    x = READFILE("write.txt")
+    y = READFILE("write.txt")
+    assert x + y == "newsecond"
 
 
 if __name__ == "__main__":
