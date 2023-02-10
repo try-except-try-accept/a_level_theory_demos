@@ -207,7 +207,12 @@ def NUM_TO_STR(num):
 
 def STR_TO_NUM(string):
     """Implementation of CAIE's pseudocode STR_TO_NUM function"""
+    
     string = str(string)
+
+    ## assume empty string yields 0
+
+    if string == "":    return 0
     
     FUNC = call_stack()[0][3]
     string_check(FUNC, string)
