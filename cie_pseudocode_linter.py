@@ -185,7 +185,11 @@ class CIEPseudocodeLinter(unittest.TestCase):
           elif line.startswith("while"):
             if "ENDWHILE" not in all_code:
               self.comments_check += f"Missing conditional loop close comment in {tn}: {line[:15]}...\n"
-
+          elif line.startswith("class"):
+            if "TYPE" not in comments:
+              self.comments_check += f"Missing record structure statement comment in {tn}: {line[:15]}...\n"    
+            if "ENDTYPE" not in all_code:
+              self.comments_check += f"Missing record structure close comment in {tn}: {line[:15]}...\n"
           tokens = line.split()
 
           for op, rep in inline.items():
