@@ -447,6 +447,7 @@ def EOF(file_name):
     this_line = file_map[file_name].readline().strip()
     if this_line:
         line_q.append(this_line)
+        return False
     else:
         return True
 
