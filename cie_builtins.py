@@ -448,11 +448,14 @@ def EOF(file_name):
 
     file_check(FUNC, file_name)
 
-    this_line = file_map[file_name].readline().strip()
-    if this_line:
-        line_q.append(this_line)
+    
+    if len(line_q):
         return False
     else:
+        this_line = file_map[file_name].readline().strip()
+        if this_line:
+            line_q.append(this_line)
+            return False
         return True
 
     
@@ -956,6 +959,10 @@ def tests():
         assert False
     except PseudocodeFileError as e:
         print(e)
+
+    CLOSEFILE("write.txt")
+
+
 
 if __name__ == "__main__":
     tests()
