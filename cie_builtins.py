@@ -382,11 +382,15 @@ def OUTPUT(*text):
 def OPENFILE(file_name, mode):
     """Implementation of CAIE's pseudocode OPENFILE statement"""
     FUNC = call_stack()[0][3]
+    already_open = False
     try:
-        file_check(file_name)
-        raise PseudocodeFileError(FUNC, file_name, "can't open file - already open in memory.")
-    except:
+        file_check(FUNC, file_name)
+        already_open = True
+    except PseudocodeFileError as e:
         pass
+
+    if already_open:
+        raise PseudocodeFileError(FUNC, file_name, "can't open file - already open in memory.")
         
     try:
         mode = {"FOR READ":"r","FOR WRITE":"w","FOR APPEND":"a", "FOR RANDOM":"rb"}[mode]
@@ -943,8 +947,15 @@ def tests():
     OPENFILE("write.txt", "FOR READ")
     x = READFILE("write.txt")
     y = READFILE("write.txt")
+    CLOSEFILE("write.txt")
     assert x + y == "newsecond"
 
+    OPENFILE("write.txt", "FOR READ")
+    try:
+        OPENFILE("write.txt", "FOR READ")
+        assert False
+    except PseudocodeFileError as e:
+        print(e)
 
 if __name__ == "__main__":
     tests()
