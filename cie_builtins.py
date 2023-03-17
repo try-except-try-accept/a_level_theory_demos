@@ -369,7 +369,7 @@ def SETDATE(dd, mm, yyyy):
 
 def INPUT():
     """Implementation of CAIE's pseudocode INPUT statement"""
-    return input()
+    return input().strip()
 	
 ################################################
 
