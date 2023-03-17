@@ -208,7 +208,7 @@ def NUM_TO_STR(num):
 def STR_TO_NUM(string):
     """Implementation of CAIE's pseudocode STR_TO_NUM function"""
     
-    string = str(string)
+    string = str(string).strip()
 
     ## assume empty string yields 0
 
