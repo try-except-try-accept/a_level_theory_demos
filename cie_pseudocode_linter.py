@@ -53,14 +53,11 @@ class CIEPseudocodeLinter(unittest.TestCase):
     def test_illegal_techniques(self):
       # Enter code here
    
-      
       if self.illegal_techniques_check:
 
-        raise Exception(self.illegal_techniques_check)
+        raise Exception("\n".join(self.illegal_techniques_check))
 
-
-
-      assert self.illegal_techniques_check == ""
+      assert len(self.illegal_techniques_check) == 0
 
 
     def test_variable_declarations(self):
@@ -105,8 +102,8 @@ class CIEPseudocodeLinter(unittest.TestCase):
               illegal_found = True
       
             if illegal_found:
-              s = "\n" + f"Illegal pseudocode-style Python technique encountered: {illegal} in {tn} solution."
-              self.illegal_techniques_check += s
+              s = f"Illegal pseudocode-style Python technique encountered: {illegal} in {tn} solution."
+              self.illegal_techniques_check.add(s)
 
       for line in task.code:
         remove_string = ""
@@ -131,16 +128,16 @@ class CIEPseudocodeLinter(unittest.TestCase):
           in_pos = tokens.index("in")
           if tokens[in_pos+1].startswith("range") == False:
             exp = f"{tokens[in_pos-1]} {tokens[in_pos]} {tokens[in_pos+1]}"
-            self.illegal_techniques_check += "\n" + f"Illegal pseudocode-style Python technique encountered: {exp} in {tn} solution."
+            self.illegal_techniques_check.add(f"Illegal pseudocode-style Python technique encountered: {exp} in {tn} solution.")
 
         if "[" in line and "]" in line:
           var = line.split("[")[0].split()[-1].strip()
           for p in task.params: # TODO + task.locals:
 
               if p.name == var:
-                  if "ARRAY" not in p.type:
+                  if p.type and "ARRAY" not in p.type:
 
-                      self.illegal_techniques_check += "\n" + f"Illegal pseudocode-style Python technique encountered: {var}[x] in {tn} solution."
+                      self.illegal_techniques_check.add(f"Illegal pseudocode-style Python technique encountered: {var}[x] in {tn} solution.")
 
 
     def check_declarations(self):
@@ -268,7 +265,7 @@ class CIEPseudocodeLinter(unittest.TestCase):
 
     def check_prereqs(self):
 
-      if not USE_LINTER or (not self.comments_check and self.interfaces_check == self.declarations_check == self.illegal_techniques_check):
+      if not USE_LINTER or (not self.comments_check and self.interfaces_check == self.declarations_check and not self.illegal_techniques_check):
         return True
 
       raise Exception("Functionality can only be checked if you are writing pseudocode-style Python.")
@@ -289,7 +286,7 @@ class CIEPseudocodeLinter(unittest.TestCase):
 
       self.illegal_map = {"start":illegals + ['f"', "f''"], "token":"int,bool,str,float,list".split(",")}
 
-      self.illegal_techniques_check = ""
+      self.illegal_techniques_check = set()
       self.declarations_check = ""
       self.comments_check = set()
       self.interfaces_check = ""
