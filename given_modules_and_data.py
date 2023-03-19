@@ -1,0 +1,62 @@
+from cie_builtins import *
+
+"""DECLARE LogArray : ARRAY[1:50] OF STRING
+DECLARE Screen : ARRAY[1:128, 1:180] OF INTEGER"""
+            
+Screen = [[0 for _ in range(128)] for _ in range(80)]
+
+LogArray = ["" for _ in range(50)]
+
+LogArray[0] = "SS168Zlo575&09:09, December 21, 2022"
+LogArray[1] = "GQ769Pqy205&08:27, August 10, 2022"
+LogArray[2] = "OU625Lgo197&16:02, August 27, 2022"
+LogArray[3] = "AS832Cgy467&14:28, August 13, 2022"
+LogArray[4] = "FL112Rce529&10:34, August 13, 2022"
+LogArray[5] = "PY448Pqy205&07:31, December 04, 2022"
+LogArray[6] = "MC840Zqw613&11:32, February 16, 2022"
+LogArray[7] = "OO132Zlo575&18:08, December 08, 2022"
+LogArray[8] = "DW555Lia374&12:17, May 11, 2022"
+LogArray[9] = "LG819Thr457&08:42, April 16, 2022"
+LogArray[10] = "FW786Zlo575&14:58, June 01, 2022"
+LogArray[11] = ""
+LogArray[12] = "DK525Mcj845&19:11, October 04, 2022"
+LogArray[13] = "AS832Lgo197&13:58, June 18, 2022"
+LogArray[14] = "ZQ561Lkk396&18:11, April 14, 2022"
+LogArray[15] = "AO544Fod753&07:24, July 28, 2022"
+LogArray[16] = "EF815Pqy205&10:49, May 18, 2022"
+LogArray[17] = "XM113Thr457&13:04, April 02, 2022"
+LogArray[18] = "ES200Pqy205&14:19, January 09, 2022"
+LogArray[19] = "WE697Zdt736&16:02, January 26, 2022"
+LogArray[20] = "MW918Lkk396&19:28, November 12, 2022"
+LogArray[21] = "SM114Fod753&15:00, February 07, 2022"
+LogArray[22] = "PR366Cgy467&10:12, November 16, 2022"
+LogArray[23] = "SS168Zav317&13:46, October 17, 2022"
+LogArray[24] = "HE896Pqy205&07:39, February 12, 2022"
+LogArray[25] = "AS832Lgo197&15:45, March 14, 2022"
+LogArray[26] = "LJ963Zdt736&08:36, August 26, 2022"
+LogArray[27] = "RD804Rce529&08:23, April 06, 2022"
+LogArray[28] = "BQ313Uzb632&14:53, November 09, 2022"
+LogArray[29] = "NT765Bdi878&12:47, January 16, 2022"
+LogArray[30] = "HG620Mcj845&12:14, August 21, 2022"
+LogArray[31] = "YH480Zlo575&07:06, September 17, 2022"
+LogArray[32] = "PS252Lia374&18:57, April 12, 2022"
+LogArray[33] = "EI258Wav317&11:30, April 03, 2022"
+LogArray[34] = "YO472Pqy205&15:11, October 12, 2022"
+LogArray[35] = "UD541Cgy467&16:41, February 09, 2022"
+LogArray[36] = "RD388Lkk396&17:05, December 16, 2022"
+LogArray[37] = "XK476Lia374&09:05, March 11, 2022"
+LogArray[38] = "LR300Zlo575&13:07, March 16, 2022"
+LogArray[39] = "UD541Mcj845&19:02, July 08, 2022"
+LogArray[40] = "YU817Thr457&19:55, November 02, 2022"
+LogArray[41] = "EI258Mcj845&07:56, January 27, 2022"
+LogArray[42] = "WS824Mcj845&16:24, December 28, 2022"
+LogArray[43] = "SS168Zhr457&15:35, October 01, 2022"
+LogArray[44] = "SM114Zqw613&09:47, March 15, 2022"
+LogArray[45] = "XK476Lgo197&10:14, July 18, 2022"
+LogArray[46] = "PY448Zlo575&14:08, August 20, 2022"
+LogArray[47] = "FV264Zqw613&16:07, September 27, 2022"
+LogArray[48] = "LJ963Uzb632&15:32, January 06, 2022"
+LogArray[49] = "UD541Zqw613&10:51, October 25, 2022"
+
+
+

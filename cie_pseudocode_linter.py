@@ -1,7 +1,5 @@
 import unittest
-from pseudocode_problem_set_example import *
-# Add imports here
-
+from main import *
 import random
 import builtins
 import unittest
@@ -10,6 +8,29 @@ from unittest.mock import patch
 NUM_TASKS = 3
 
 # Add initialization code here
+import unittest
+from main import *
+# Add imports here
+
+import random
+import builtins
+import unittest
+from io import StringIO, TextIOWrapper
+from unittest.mock import patch
+NUM_TASKS = 9
+GLOBALS = ["Membership", "Screen", "LogArray"]
+TASKS = ["SortAscending",
+"FlowchartAlgorithm",
+"AnAlgorithm",
+"Student",
+"GetIDs",
+"LogEvents",
+"MakeNewFile",
+"SetRow",
+"SearchInRow",
+"GetCentreCol"]
+
+
 
 
 class CIEPseudocodeLinter(unittest.TestCase):
@@ -25,9 +46,9 @@ class CIEPseudocodeLinter(unittest.TestCase):
       # Enter code here
       if self.comments_check:
 
-        raise Exception(self.comments_check)
+        raise Exception("\n".join(self.comments_check))
 
-      assert self.comments_check == ""
+      assert len(self.comments_check) == 0
 
     def test_illegal_techniques(self):
       # Enter code here
@@ -52,9 +73,14 @@ class CIEPseudocodeLinter(unittest.TestCase):
 
       assert self.declarations_check == ""
 
+#### Initialization ####
 
     def redirect_print(self, *args, end="\n", sep=" "):
       self.print_log += sep.join(str(a) for a in args) + end
+
+
+    def mock_input(self):
+      return self.mock_inputs.pop(0)
 
     def check_for_illegals(self):
 
@@ -83,6 +109,30 @@ class CIEPseudocodeLinter(unittest.TestCase):
               self.illegal_techniques_check += s
 
       for line in task.code:
+        remove_string = ""
+        quote = []
+
+        for char in line:
+          for quote_check in ["'", '"']:
+            if char == quote_check:
+              if quote and quote[-1] == char:
+                quote.pop(-1)
+              else:
+                quote.append(quote_check)
+              continue
+          if quote:
+            continue
+
+          remove_string += char
+          
+        tokens = remove_string.split()
+        
+        if "in" in tokens:
+          in_pos = tokens.index("in")
+          if tokens[in_pos+1].startswith("range") == False:
+            exp = f"{tokens[in_pos-1]} {tokens[in_pos]} {tokens[in_pos+1]}"
+            self.illegal_techniques_check += "\n" + f"Illegal pseudocode-style Python technique encountered: {exp} in {tn} solution."
+
         if "[" in line and "]" in line:
           var = line.split("[")[0].split()[-1].strip()
           for p in task.params: # TODO + task.locals:
@@ -92,7 +142,7 @@ class CIEPseudocodeLinter(unittest.TestCase):
 
                       self.illegal_techniques_check += "\n" + f"Illegal pseudocode-style Python technique encountered: {var}[x] in {tn} solution."
 
-    
+
     def check_declarations(self):
 
       
@@ -113,8 +163,12 @@ class CIEPseudocodeLinter(unittest.TestCase):
           else:
             continue
           var = var.strip()
-          if var not in task.declarations and not any(p.startswith(var) for p in task.params):
-            self.declarations_check += f"Variable {var} has not been declared.\n"
+          if var in GLOBALS:
+            continue
+          if "." not in var and var not in task.declarations and not any(p.startswith(var) for p in task.params):
+            msg = f"Variable {var} has not been declared.\n"
+            if msg not in self.declarations_check:
+              self.declarations_check += msg
 
     def check_interfaces(self):
 
@@ -125,7 +179,8 @@ class CIEPseudocodeLinter(unittest.TestCase):
         header = task.code[0]
         return_annotation = ""
         if "->" in header:
-          return_annotation = header.split("-> ")[-1].strip()[:-1]
+          header = header.split("#")[0]
+          return_annotation = header.split(" -> ")[-1].strip()[:-1]
           if return_annotation not in self.ALLOWED_TYPES:
               self.interfaces_check += f"Invalid type declaration for return value {return_annotation} in {tn}.\n"
 
@@ -151,7 +206,8 @@ class CIEPseudocodeLinter(unittest.TestCase):
                "%":"MOD",
                "//":"DIV",
                 '+ "':"&",
-                "+ '":"&"
+                "+ '":"&",
+                "][":","
                }
 
 
@@ -171,71 +227,77 @@ class CIEPseudocodeLinter(unittest.TestCase):
 
           if line.startswith("if"):
             if "THEN" not in comments:
-              self.comments_check += f"Missing selection statement comment in {tn}: {line[:15]}...\n"    
+              self.comments_check.add(f"Missing selection statement comment in {tn}: {line[:15]}...")    
             if "ENDIF" not in all_code:
-              self.comments_check += f"Missing selection statement close comment in {tn}: {line[:15]}...\n"
-          elif line.startswith("def"):  
+              self.comments_check.add(f"Missing selection statement close comment in {tn}: {line[:15]}...")
+          elif line.startswith("def") and "__init__" not in line:  
             if "ENDFUNCTION" not in all_code and "ENDPROCEDURE" not in all_code:
-              self.comments_check += f"Missing subroutine close comment in {tn}: {line[:15]}...\n"
+              self.comments_check.add(f"Missing subroutine close comment in {tn}: {line[:15]}...")
+          elif line.startswith("self."):
+            if "DECLARE" not in comments:
+              self.comments_check.add(f"Missing record property declaration in {tn}: {line[:15]}...")
+          elif line.startswith("class"):
+            if "TYPE" not in all_code:
+              self.comments_check.add(f"Missing record definition comment in {tn}: {line[:15]}...")
+            if "ENDTYPE" not in all_code:
+              self.comments_check.add(f"Missing record definition close comment in {tn}: {line[:15]}...")
           elif line.startswith("for"):
             if "TO" not in comments:
-              self.comments_check += f"Missing count-controlled loop statement comment in {tn}: {line[:15]}...\n"    
+              self.comments_check.add(f"Missing count-controlled loop statement comment in {tn}: {line[:15]}...")    
             if "NEXT " not in all_code:
-              self.comments_check += f"Missing count-controlled loop close comment in {tn}: {line[:15]}...\n"
+              self.comments_check.add(f"Missing count-controlled loop close comment in {tn}: {line[:15]}...")
           elif line.startswith("while"):
             if "ENDWHILE" not in all_code:
-              self.comments_check += f"Missing conditional loop close comment in {tn}: {line[:15]}...\n"
-          elif line.startswith("class"):
-            if "TYPE" not in comments:
-              self.comments_check += f"Missing record structure statement comment in {tn}: {line[:15]}...\n"    
-            if "ENDTYPE" not in all_code:
-              self.comments_check += f"Missing record structure close comment in {tn}: {line[:15]}...\n"
+              self.comments_check.add(f"Missing conditional loop close comment in {tn}: {line[:15]}...")
+
           tokens = line.split()
 
           for op, rep in inline.items():
             
             if op in tokens and rep not in comments:
-              if op == "=" and "= [" in line:  continue
-              self.comments_check += f"Missing {op} operator comment in {tn}: {line[:15]}...\n"
+              if op == "=" and ("= [" in line or line.startswith("self.") or "INPUT()" in line):  continue
+                
+              self.comments_check.add(f"Missing {op} operator comment in {tn}: {line[:15]}...")
 
-          if len(self.comments_check.splitlines()) > 5:
-            self.comments_check += " [truncated]"
-            return False
+          
+
+
+
+          
 
 
     def check_prereqs(self):
 
-      if self.comments_check == self.interfaces_check == self.declarations_check == self.illegal_techniques_check:
+      if not USE_LINTER or (not self.comments_check and self.interfaces_check == self.declarations_check == self.illegal_techniques_check):
         return True
 
       raise Exception("Functionality can only be checked if you are writing pseudocode-style Python.")
 
+#### SETUP ####
+
     def setUp(self):
+      
+
+
       # Add setup code here
-      self.ALLOWED_TYPES = "INTEGER,STRING,REAL,BOOLEAN,CHAR,ARRAY".split(",")
+      self.ALLOWED_TYPES = "INTEGER,STRING,REAL,BOOLEAN,CHAR,ARRAY,Planet".split(",")
       self.print_log = ''
       illegals = ["."+m+"(" for m in dir(str) + dir(list)] + [f+"(" for f in dir(builtins) + dir(random) + dir(TextIOWrapper)]
       illegals.remove("range(")
+      illegals.remove("__init__(")
       illegals += "+=,-=,/=,*=,%=,//=,**,break,continue,finally,True,False".split(",")
 
       self.illegal_map = {"start":illegals + ['f"', "f''"], "token":"int,bool,str,float,list".split(",")}
 
       self.illegal_techniques_check = ""
       self.declarations_check = ""
-      self.comments_check = ""
+      self.comments_check = set()
       self.interfaces_check = ""
 
-      with open("pseudocode_problem_set_example.py", encoding="utf-8") as f:
+      with open("main.py", encoding="utf-8") as f:
         code = f.read()
 
-      self.task_names = ["LastLines",
-                   "NewLastLines",
-                   "Parse",
-                   "IsPalindrome",
-                   "HomeMadeMid",
-                   "GetField1And3",
-                   "FindSevens"]
-
+      self.task_names = TASKS
       class Task:
         def __init__(self):
           self.task_name = ""
@@ -266,19 +328,28 @@ class CIEPseudocodeLinter(unittest.TestCase):
         
         
         define_sub = "def " + task_name + "("
+        define_class = "class " + task_name
+        is_class = False
         try:
           code_start = code.index("def " + task_name)
         except:
-          continue
+          try:
+            code_start = code.index("class " + task_name)
+            is_class = True
+          except:
+            continue
 
         for i, line in enumerate(code[code_start:].splitlines()):
           if i == 0:
-            params = line.strip().replace(define_sub, "")
-            params = [Variable(p) for p in params[:params.index(")")].split(",")]
-            new_task.params = params
-          elif line.startswith("def"):  break
+            if not is_class:
+              params = line.strip().replace(define_sub, "")
+              for p in params[:params.index(")")].split(","):
+                if p.strip():            
+                  new_task.params.append(Variable(p))
+          elif (line.startswith("def") and "__init__" not in line) or line.startswith("class") or "__main__" in line:  break
 
           new_task.code.append(line)
+
 
         decs = eval(task_name+".__doc__") or ""
 
@@ -292,13 +363,12 @@ class CIEPseudocodeLinter(unittest.TestCase):
 
         self.code_by_task[task_name] = new_task
 
-    
+
 
         self.check_interfaces()
         self.check_declarations()
         self.check_for_illegals()
         self.check_comments()
-
 
 
 if __name__ == "__main__":

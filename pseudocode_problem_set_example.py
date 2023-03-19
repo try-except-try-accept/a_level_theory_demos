@@ -7,7 +7,7 @@ from cie_builtins import *
 def HomeMadeMid(s: STRING, start: INTEGER, num : INTEGER) -> STRING:
     start = start - 1 # ←
     
-    return MID(s, start, num)
+    return MID(s, start, num)   
 # ENDFUNCTION
 
 def Parse(s: STRING) -> STRING:
